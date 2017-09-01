@@ -6,10 +6,12 @@ Private Twitter API tokens are currently stored locally in a file tokens.py
 Uses Tweepy API to store follower data in sqlite3 database.
 
 # TODO
-1. Set up Twitter OAuth 
-https://dev.twitter.com/web/sign-in/implementing
-https://github.com/abraham/twitteroauth
-
-2. Revise SQL entry to Upsert (update or insert)
-3. Deploy to Heroku
-4. Build front-end
+* Set up Twitter OAuth 
+  * https://dev.twitter.com/web/sign-in/implementing
+* Deploy to Heroku
+* Build front-end
+* Set up logging
+* Handle errors
+* Build users table
+  * On first check, pull full followers JSON.
+  * On future checks, compare follower # to DB followers to evaluate optimal algorithm?
