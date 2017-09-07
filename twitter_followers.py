@@ -15,7 +15,7 @@ auth.set_access_token(tokens.access_token, tokens.access_token_secret)
 api = tweepy.API(auth)
 
 # Until Twitter app authentication is configured, place username here.
-username = "saraislet"
+username = "jadegear"
 my_id = api.get_user(username).id
 date = datetime.datetime.now()
 
@@ -32,6 +32,18 @@ def limit_handled(cursor):
             yield cursor.next()
         except tweepy.RateLimitError:
             time.sleep(15 * 60)
+
+
+def check_username(username):
+    """
+    Checks database for username, returns boolean.
+    """
+    cursor.execute(
+            '''SELECT id FROM followers WHERE screen_name = ?''', (username,))
+    if cursor.fetchone() is None:
+        return False
+    else:
+        return True
 
 
 def store_user(username):
@@ -63,14 +75,14 @@ def update_user(username):
     db.commit()
     
  
-def get_followers(userdata):
+def get_followers(username):
     """
     Construct a set of follower IDs and a dictionary of follower names.
     """
     global followers
     followers = {}
     follower_ids = set()
-    for follower in limit_handled(tweepy.Cursor(api.followers, userdata.screen_name, count=100).items()):
+    for follower in limit_handled(tweepy.Cursor(api.followers, username, count=100).items()):
         followers[follower.id] = follower.screen_name
         follower_ids.add(follower.id)
     return follower_ids
@@ -118,12 +130,15 @@ def update_follower_db(follower_ids, follower_names = None):
             unfollowers.add(row[3])
     
     # Iterate through remaining followers in the set, and add them to the database.
-    for follower in follower_ids:
-        screen_name = api.get_user(follower).screen_name
+    for follower_id in follower_ids:
+        if follower_id in followers:
+            screen_name = followers[follower_id]
+        else:
+            screen_name = api.get_user(follower_id).screen_name
         cursor.execute(
             '''INSERT INTO followers(twitter_id, follower_id, screen_name, date_added, following)
             VALUES(?,?,?,?,1)''', 
-            (my_id, follower, screen_name, date))  
+            (my_id, follower_id, screen_name, date))  
         db.commit()
         newFollowers.add(screen_name)
     
@@ -137,14 +152,20 @@ def update_follower_db(follower_ids, follower_names = None):
     else:
         print("Unfollows (" + str(len(unfollowers)) + "): " + str(unfollowers))
 
-# These are the actions for an existing user.
-# TODO: Build function of actions for existing user,
-# TODO: Build function of actions for new user,
-# TODO: Build method to identify whether user is new or existing.
-update_user(username)
-follower_list = get_follower_ids(username)
-update_follower_db(follower_list)
 
+"""
+New users must be stored in the database.
+Get_followers pulls all follower data for new users.
+"""
+if check_username(username) is True:
+    update_user(username)
+    follower_list = get_follower_ids(username)
+    update_follower_db(follower_list)
+else:
+    store_user(username)
+    follower_list = get_followers(username)
+    update_follower_db(follower_list)
+    
 
 # Close the db connection.
 db.close()
