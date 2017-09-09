@@ -1,5 +1,6 @@
-# Don't copy private tokens to public repository #
+# Don't copy private tokens nor local files to public repository #
 tokens.py
+*local.py
 
 
 # Python files #

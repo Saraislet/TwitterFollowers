@@ -15,7 +15,7 @@ auth.set_access_token(tokens.access_token, tokens.access_token_secret)
 api = tweepy.API(auth)
 
 # Until Twitter app authentication is configured, place username here.
-username = "jadegear"
+username = "saraislet"
 my_id = api.get_user(username).id
 date = datetime.datetime.now()
 
@@ -34,24 +34,22 @@ def limit_handled(cursor):
             time.sleep(15 * 60)
 
 
-def check_username(username):
+def check_username(userdata):
     """
     Checks database for username, returns boolean.
     """
     cursor.execute(
-            '''SELECT id FROM followers WHERE screen_name = ?''', (username,))
+            '''SELECT id FROM followers WHERE follower_id = ?''', (userdata.id,))
     if cursor.fetchone() is None:
         return False
     else:
         return True
 
 
-def store_user(username):
+def store_user(userdata):
     """
     Store user data in the users table on the first login.
     """
-    global userdata
-    userdata = api.get_user(username)
     cursor.execute(
         '''INSERT INTO users(
             twitter_id, screen_name, 
@@ -62,12 +60,10 @@ def store_user(username):
     db.commit()
 
 
-def update_user(username):
+def update_user(userdata):
     """
     On subsequent logins, update users table data.
     """
-    global userdata
-    userdata = api.get_user(username)
     cursor.execute(
         '''UPDATE users SET date_last_checked = ?, number_of_followers = ?
         WHERE id = ?''', 
@@ -75,24 +71,24 @@ def update_user(username):
     db.commit()
     
  
-def get_followers(username):
+def get_followers(userdata):
     """
     Construct a set of follower IDs and a dictionary of follower names.
     """
     global followers
     followers = {}
     follower_ids = set()
-    for follower in limit_handled(tweepy.Cursor(api.followers, username, count=100).items()):
+    for follower in limit_handled(tweepy.Cursor(api.followers, userdata.id, count=100).items()):
         followers[follower.id] = follower.screen_name
         follower_ids.add(follower.id)
     return follower_ids
 
 
-def get_follower_ids(username):
+def get_follower_ids(userdata):
     """
     Construct a set of follower IDs.
     """
-    follower_ids = set(api.followers_ids(username))
+    follower_ids = set(api.followers_ids(userdata.id))
     return follower_ids
 
 
@@ -130,6 +126,8 @@ def update_follower_db(follower_ids, follower_names = None):
             unfollowers.add(row[3])
     
     # Iterate through remaining followers in the set, and add them to the database.
+    # OLD: [user.screen_name for user in api.lookup_users(user_ids = follower_ids)]
+    # Above code may be efficient, but must use limit_handled to paginate lookups.
     for follower_id in follower_ids:
         if follower_id in followers:
             screen_name = followers[follower_id]
@@ -157,13 +155,16 @@ def update_follower_db(follower_ids, follower_names = None):
 New users must be stored in the database.
 Get_followers pulls all follower data for new users.
 """
-if check_username(username) is True:
-    update_user(username)
-    follower_list = get_follower_ids(username)
+global userdata
+userdata = api.get_user(username)
+
+if check_username(userdata) is True:
+    update_user(userdata)
+    follower_list = get_follower_ids(userdata)
     update_follower_db(follower_list)
 else:
-    store_user(username)
-    follower_list = get_followers(username)
+    store_user(userdata)
+    follower_list = get_followers(userdata)
     update_follower_db(follower_list)
     
 
