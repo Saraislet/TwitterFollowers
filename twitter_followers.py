@@ -7,16 +7,16 @@ Created on Mon Aug  7 16:53:33 2017
 
 import time, datetime, sqlite3
 import tweepy
-import tokens
+#import tokens
 
 # Pass tokens to Tweepy's OAuthHandler.
-auth = tweepy.OAuthHandler(tokens.consumer_key, tokens.consumer_secret)
-auth.set_access_token(tokens.access_token, tokens.access_token_secret)
-api = tweepy.API(auth)
+#auth = tweepy.OAuthHandler(tokens.consumer_key, tokens.consumer_secret)
+#auth.set_access_token(tokens.access_token, tokens.access_token_secret)
+#api = tweepy.API(auth)
 
 # Until Twitter app authentication is configured, place username here.
-username = "saraislet"
-my_id = api.get_user(username).id
+#username = "saraislet"
+#my_id = api.get_user(username).id
 date = datetime.datetime.now()
 
 # Connect to followers.db
@@ -75,8 +75,6 @@ def get_followers(userdata):
     """
     Construct a set of follower IDs and a dictionary of follower names.
     """
-    global followers
-    followers = {}
     follower_ids = set()
     for follower in limit_handled(tweepy.Cursor(api.followers, userdata.id, count=100).items()):
         followers[follower.id] = follower.screen_name
@@ -92,7 +90,7 @@ def get_follower_ids(userdata):
     return follower_ids
 
 
-def update_follower_db(follower_ids, follower_names = None):
+def update_follower_db(userdata, follower_ids, follower_names = None):
     """
     Iterate through rows in the database, checking the list for each.
     """
@@ -101,7 +99,7 @@ def update_follower_db(follower_ids, follower_names = None):
     
     cursor.execute(
             '''SELECT id, follower_id, following, screen_name 
-            FROM followers WHERE twitter_id = ?''', (my_id,))
+            FROM followers WHERE twitter_id = ?''', (userdata.id,))
     rows = cursor.fetchall()
     
     for row in rows:
@@ -136,7 +134,7 @@ def update_follower_db(follower_ids, follower_names = None):
         cursor.execute(
             '''INSERT INTO followers(twitter_id, follower_id, screen_name, date_added, following)
             VALUES(?,?,?,?,1)''', 
-            (my_id, follower_id, screen_name, date))  
+            (userdata.id, follower_id, screen_name, date))  
         db.commit()
         newFollowers.add(screen_name)
     
@@ -149,24 +147,27 @@ def update_follower_db(follower_ids, follower_names = None):
         print("No new unfollows.")
     else:
         print("Unfollows (" + str(len(unfollowers)) + "): " + str(unfollowers))
+    print("You have " + str(userdata.followers_count) + " followers.")
 
 
-"""
-New users must be stored in the database.
-Get_followers pulls all follower data for new users.
-"""
-global userdata
-userdata = api.get_user(username)
-
-if check_username(userdata) is True:
-    update_user(userdata)
-    follower_list = get_follower_ids(userdata)
-    update_follower_db(follower_list)
-else:
-    store_user(userdata)
-    follower_list = get_followers(userdata)
-    update_follower_db(follower_list)
+def main(userdata, twitter_api):
+    """
+    New users must be stored in the database.
+    Get_followers pulls all follower data for new users.
+    """
+    global api
+    api = twitter_api
+    global followers
+    followers = {}
     
+    if check_username(userdata) is True:
+        update_user(userdata)
+        follower_list = get_follower_ids(userdata)
+        update_follower_db(userdata, follower_list)
+    else:
+        store_user(userdata)
+        follower_list = get_followers(userdata)
+        update_follower_db(userdata, follower_list)
 
 # Close the db connection.
 db.close()
