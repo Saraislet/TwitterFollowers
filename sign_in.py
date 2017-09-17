@@ -6,7 +6,7 @@ Created on Tue Sep 12 20:12:44 2017
 """
 
 import os
-from flask import Flask, request
+from flask import Flask, request, render_template
 import flask
 import tweepy
 #import twitter_followers as tf
@@ -29,7 +29,6 @@ session = dict()
 db = dict()
 
 
-
 @app.route('/')
 def send_token():
     redirect_url = ""
@@ -44,7 +43,9 @@ def send_token():
         print('Error! Failed to get request token')
 
     #this is twitter's url for authentication
-    return flask.redirect(redirect_url)
+#    return flask.redirect(redirect_url)
+    return render_template('start.html', redirect_url = redirect_url)
+
 
 
 @app.route("/verify")
