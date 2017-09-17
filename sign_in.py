@@ -9,7 +9,7 @@ from flask import Flask, request
 import flask
 import tweepy
 import tokens
-import twitter_followers as tf
+#import twitter_followers as tf
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg', silent=True)
@@ -74,7 +74,7 @@ def start():
     #auth done, app logic can begin
     api = db['api']
     userdata = api.me()
-    tf.main(userdata, api)
+#    tf.main(userdata, api)
 
     #example, print your latest status posts
     return flask.render_template('followers.html', 
