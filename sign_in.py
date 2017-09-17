@@ -24,7 +24,7 @@ consumer_secret = os.environ['consumer_secret']
 #access_token_key = app.config["ACCESS_KEY"]
 #access_token_secret = app.config["ACCESS_SECRET"]
 
-callback_url = 'oob'
+callback_url = 'https://powerful-temple-76731.herokuapp.com/verify'
 session = dict()
 db = dict()
 
