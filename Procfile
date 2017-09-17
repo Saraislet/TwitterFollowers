@@ -1,1 +1,1 @@
-web: gunicorn sign-in:app
+web: gunicorn sign-in:app --error-logfile=- --access-logfile=-
