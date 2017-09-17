@@ -5,6 +5,7 @@ Created on Tue Sep 12 20:12:44 2017
 @author: Sarai
 """
 
+import os
 from flask import Flask, request
 import flask
 import tweepy
@@ -13,6 +14,11 @@ import tokens
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg', silent=True)
+
+consumer_key = os.environ['consumer_key']
+consumer_secret = os.environ['consumer_secret']
+#OAUTH_TOKEN = os.environ['TWITTER_OAUTH_TOKEN']
+#OAUTH_TOKEN_SECRET = os.environ['TWITTER_OAUTH_TOKEN_SECRET']
 
 #consumer_key = app.config["CONSUMER_ID"]
 #consumer_secret = app.config["CONSUMER_SECRET"]
@@ -28,7 +34,7 @@ db = dict()
 @app.route('/')
 def send_token():
     redirect_url = ""
-    auth = tweepy.OAuthHandler(tokens.consumer_key, tokens.consumer_secret, callback_url)
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret, callback_url)
 
     try: 
         #get the request tokens

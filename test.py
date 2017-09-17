@@ -9,7 +9,6 @@ Created on Sun Sep 17 13:01:01 2017
 from flask import Flask, request
 import flask
 import tweepy
-from . import tokens
 
 
 app = Flask(__name__)
