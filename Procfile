@@ -1,1 +1,1 @@
-web: python sign-in.py
+web: gunicorn sign-in:app
