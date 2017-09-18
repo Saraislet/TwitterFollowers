@@ -24,7 +24,7 @@ app.config.from_pyfile('config.cfg', silent=True)
 #access_token_key = app.config["ACCESS_KEY"]
 #access_token_secret = app.config["ACCESS_SECRET"]
 
-callback_url = 'https://example.com/verify'
+callback_url = 'https://powerful-temple-76731.herokuapp.com/verify'
 #callback_url = 'oob'
 session = dict()
 db = dict()
