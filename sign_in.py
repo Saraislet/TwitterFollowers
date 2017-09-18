@@ -9,7 +9,7 @@ import os
 from flask import Flask, request, render_template
 import flask
 import tweepy
-from tweepy.auth import OAuthHandler
+#from tweepy.auth import OAuthHandler
 #import twitter_followers as tf
 
 app = Flask(__name__)
@@ -20,10 +20,6 @@ consumer_secret = os.environ['consumer_secret']
 #OAUTH_TOKEN = os.environ['TWITTER_OAUTH_TOKEN']
 #OAUTH_TOKEN_SECRET = os.environ['TWITTER_OAUTH_TOKEN_SECRET']
 
-#consumer_key = app.config["CONSUMER_ID"]
-#consumer_secret = app.config["CONSUMER_SECRET"]
-#access_token_key = app.config["ACCESS_KEY"]
-#access_token_secret = app.config["ACCESS_SECRET"]
 
 callback_url = 'https://powerful-temple-76731.herokuapp.com/verify'
 #callback_url = 'oob'
@@ -64,11 +60,12 @@ def get_verification():
     del session['request_token']
 
     auth.set_access_token(token[0], token[1])
+    auth.get_access_token(verifier)
 
-    try:
-            auth.get_access_token(verifier)
-    except tweepy.TweepError:
-            print('Error! Failed to get access token.')
+#    try:
+#            auth.get_access_token(verifier)
+#    except tweepy.TweepError:
+#            print('Error! Failed to get access token.')
 
     #now you have access!
     api = tweepy.API(auth)
