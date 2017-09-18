@@ -40,6 +40,7 @@ def send_token():
         redirect_url= auth.get_authorization_url()
         session['request_token']= (auth.request_token['oauth_token'],
             auth.request_token['oauth_token_secret'])
+#        session.set('request_token', auth.request_token)
     except tweepy.TweepError:
         print('Error! Failed to get request token')
 
@@ -53,15 +54,15 @@ def send_token():
 def get_verification():
 
     #get the verifier key from the request url
-    verifier= request.args['oauth_verifier']
+    verifier = request.args['oauth_verifier']
 
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     print("session dict object is: " + str(session))
     token = session['request_token']
     del session['request_token']
 
-    auth.request_token = token
-#    auth.set_access_token(token[0], token[1])
+#    auth.request_token = token
+    auth.set_request_token(token[0], token[1])
     auth.get_access_token(verifier)
 
 #    try:
