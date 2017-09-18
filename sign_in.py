@@ -30,7 +30,6 @@ db = dict()
 @app.route('/')
 def send_token():
     redirect_url = ""
-#    auth = tweepy.OAuthHandler("FdzGyeOjfYlhwq7FdaEkZP9PH", "J0Ldb1LpZZnwY7wlmbG2VES0fNHiKZCgUBmYIv6w70EdaJcB8T", callback_url)
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret, callback_url)
 
 #    redirect_url= auth.get_authorization_url()
@@ -99,7 +98,6 @@ def start():
     userdata = api.me()
 #    tf.main(userdata, api)
 
-    #example, print your latest status posts
     return flask.render_template('followers.html', 
                                  name = userdata.name, 
                                  screen_name = userdata.screen_name, 
