@@ -56,6 +56,7 @@ def get_verification():
     verifier= request.args['oauth_verifier']
 
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    print(str(session))
     token = session['request_token']
     del session['request_token']
 
