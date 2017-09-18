@@ -79,7 +79,16 @@ def get_verification():
     db['access_token_key']=auth.access_token
     db['access_token_secret']=auth.access_token_secret
     print("Variable db contains: " + str(db))
-    return flask.redirect(flask.url_for('start'))
+    userdata = api.me()
+
+    return flask.render_template('followers.html', 
+                                 name = userdata.name, 
+                                 screen_name = userdata.screen_name, 
+                                 bg_color = userdata.profile_background_color, 
+                                 followers_count = userdata.followers_count, 
+                                 created_at = userdata.created_at)
+
+#    return flask.redirect(flask.url_for('start'))
 
 
 @app.route("/start")
