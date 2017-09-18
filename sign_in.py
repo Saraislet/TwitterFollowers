@@ -35,13 +35,15 @@ def send_token():
     redirect_url = ""
     auth = tweepy.OAuthHandler("FdzGyeOjfYlhwq7FdaEkZP9PH", "J0Ldb1LpZZnwY7wlmbG2VES0fNHiKZCgUBmYIv6w70EdaJcB8T", callback_url)
 
-    try: 
-        #get the request tokens
-        redirect_url= auth.get_authorization_url()
-        session['request_token']= (auth.request_token['oauth_token'],
-            auth.request_token['oauth_token_secret'])
-    except tweepy.TweepError:
-        print('Error! Failed to get request token')
+    redirect_url= auth.get_authorization_url()
+
+#    try: 
+#        #get the request tokens
+#        redirect_url= auth.get_authorization_url()
+#        session['request_token']= (auth.request_token['oauth_token'],
+#            auth.request_token['oauth_token_secret'])
+#    except tweepy.TweepError:
+#        print('Error! Failed to get request token')
 
     #this is twitter's url for authentication
 #    return flask.redirect(redirect_url)
