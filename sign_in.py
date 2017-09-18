@@ -38,9 +38,10 @@ def send_token():
     try: 
         #get the request tokens
         redirect_url= auth.get_authorization_url()
-        session['request_token']= (auth.request_token['oauth_token'],
-            auth.request_token['oauth_token_secret'])
+#        session['request_token']= (auth.request_token['oauth_token'],
+#            auth.request_token['oauth_token_secret'])
 #        session.set('request_token', auth.request_token)
+        session['request_token']= auth.request_token
     except tweepy.TweepError:
         print('Error! Failed to get request token')
 
