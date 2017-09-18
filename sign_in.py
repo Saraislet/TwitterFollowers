@@ -9,6 +9,7 @@ import os
 from flask import Flask, request, render_template
 import flask
 import tweepy
+from tweepy.auth import OAuthHandler
 #import twitter_followers as tf
 
 app = Flask(__name__)
@@ -62,7 +63,7 @@ def get_verification():
     token = session['request_token']
     del session['request_token']
 
-    auth.set_request_token(token[0], token[1])
+    auth.set_access_token(token[0], token[1])
 
     try:
             auth.get_access_token(verifier)
