@@ -60,7 +60,7 @@ def get_verification():
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     print("session dict object is: " + str(session))
     token = session['request_token']
-    del session['request_token']
+#    del session['request_token']
 
     auth.request_token = token
 #    auth.set_request_token(token[0], token[1])
