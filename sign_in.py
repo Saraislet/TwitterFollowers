@@ -76,8 +76,8 @@ def get_verification():
 
     #store in a db
     db['api']=api
-    db['access_token_key']=auth.access_token.key
-    db['access_token_secret']=auth.access_token.secret
+    db['access_token_key']=auth.access_token
+    db['access_token_secret']=auth.access_token_secret
     return flask.redirect(flask.url_for('start'))
 
 
