@@ -5,7 +5,7 @@ Created on Tue Sep 12 20:12:44 2017
 @author: Sarai
 """
 
-#import os
+import os
 from flask import Flask, request, render_template
 import flask
 import tweepy
@@ -14,8 +14,8 @@ import tweepy
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg', silent=True)
 
-#consumer_key = os.environ['consumer_key']
-#consumer_secret = os.environ['consumer_secret']
+consumer_key = os.environ['consumer_key']
+consumer_secret = os.environ['consumer_secret']
 #OAUTH_TOKEN = os.environ['TWITTER_OAUTH_TOKEN']
 #OAUTH_TOKEN_SECRET = os.environ['TWITTER_OAUTH_TOKEN_SECRET']
 
@@ -33,17 +33,18 @@ db = dict()
 @app.route('/')
 def send_token():
     redirect_url = ""
-    auth = tweepy.OAuthHandler("FdzGyeOjfYlhwq7FdaEkZP9PH", "J0Ldb1LpZZnwY7wlmbG2VES0fNHiKZCgUBmYIv6w70EdaJcB8T", callback_url)
+#    auth = tweepy.OAuthHandler("FdzGyeOjfYlhwq7FdaEkZP9PH", "J0Ldb1LpZZnwY7wlmbG2VES0fNHiKZCgUBmYIv6w70EdaJcB8T", callback_url)
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret, callback_url)
 
-    redirect_url= auth.get_authorization_url()
+#    redirect_url= auth.get_authorization_url()
 
-#    try: 
-#        #get the request tokens
-#        redirect_url= auth.get_authorization_url()
-#        session['request_token']= (auth.request_token['oauth_token'],
-#            auth.request_token['oauth_token_secret'])
-#    except tweepy.TweepError:
-#        print('Error! Failed to get request token')
+    try: 
+        #get the request tokens
+        redirect_url= auth.get_authorization_url()
+        session['request_token']= (auth.request_token['oauth_token'],
+            auth.request_token['oauth_token_secret'])
+    except tweepy.TweepError:
+        print('Error! Failed to get request token')
 
     #this is twitter's url for authentication
 #    return flask.redirect(redirect_url)
