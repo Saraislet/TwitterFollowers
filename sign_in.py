@@ -60,7 +60,8 @@ def get_verification():
     token = session['request_token']
     del session['request_token']
 
-    auth.set_access_token(token[0], token[1])
+    auth.request_token = token
+#    auth.set_access_token(token[0], token[1])
     auth.get_access_token(verifier)
 
 #    try:
