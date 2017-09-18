@@ -64,12 +64,12 @@ def get_verification():
 
     auth.request_token = token
 #    auth.set_request_token(token[0], token[1])
-    auth.get_access_token(verifier)
+#    auth.get_access_token(verifier)
 
-#    try:
-#            auth.get_access_token(verifier)
-#    except tweepy.TweepError:
-#            print('Error! Failed to get access token.')
+    try:
+            auth.get_access_token(verifier)
+    except tweepy.TweepError:
+            print('Error! Failed to get access token.')
 
     #now you have access!
     api = tweepy.API(auth)
@@ -78,12 +78,14 @@ def get_verification():
     db['api']=api
     db['access_token_key']=auth.access_token
     db['access_token_secret']=auth.access_token_secret
+    print("Variable db contains: " + str(db))
     return flask.redirect(flask.url_for('start'))
 
 
 @app.route("/start")
 def start():
     #auth done, app logic can begin
+    print("Variable db contains: " + str(db))
     api = db['api']
     userdata = api.me()
 #    tf.main(userdata, api)
